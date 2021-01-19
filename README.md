@@ -1,13 +1,13 @@
-# godemo
+# godemo:
 
 A tool that will create a User Directory.
 
 
-Setup
+# Setup:
 ________________
 
 
-TODO
+# TODO:
 ___________
 
 - Signup
@@ -26,12 +26,12 @@ ___________
         - Search by First Name, Last Name, Username, etc.
 
 
-Future Improvements:
+# Future Improvements:
 ____________________
 
 
 
-Note:
+# Note:
 ______
 
 
