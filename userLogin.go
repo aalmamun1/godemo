@@ -59,7 +59,7 @@ func loginHandler(response http.ResponseWriter, request *http.Request) {
 		status := validateUserNameAndPassword(name, pass)
 
 		if status == "successful user login" {
-			redirectTarget = "/internal"
+			redirectTarget = "/internalUser"
 		} else {
 
 			redirectTarget = "/loginError"
@@ -70,11 +70,10 @@ func loginHandler(response http.ResponseWriter, request *http.Request) {
 }
 
 func loginErrorHandler(response http.ResponseWriter, request *http.Request) {
-	fmt.Fprint(response, "username and/or password is invalid")
+	fmt.Fprint(response, messageWithHomeLink, "Username and/or Password is invalid")
 }
 
 // logout handler
-
 func logoutHandler(response http.ResponseWriter, request *http.Request) {
 	clearSession(response)
 	http.Redirect(response, request, "/", 302)

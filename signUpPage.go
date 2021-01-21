@@ -5,6 +5,10 @@ import (
 	"net/http"
 )
 
+const messageWithHomeLink = `
+<a href="/" >Home</a><br><br>
+	`
+
 // sgnup handler
 func signupHandler(response http.ResponseWriter, request *http.Request) {
 	name := request.FormValue("signupName")
@@ -28,5 +32,5 @@ func signupHandler(response http.ResponseWriter, request *http.Request) {
 func signupSuccessHandler(response http.ResponseWriter, request *http.Request) {
 	//status := response.Header().Get("status")
 	//fmt.Fprint(response, status)
-	fmt.Fprint(response, "User Inserted successfully")
+	fmt.Fprint(response, messageWithHomeLink, "User Inserted successfully")
 }
