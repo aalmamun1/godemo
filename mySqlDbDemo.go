@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	_ "github.com/go-sql-driver/mysql"
+	"strconv"
 	"time"
 )
 
@@ -100,5 +101,43 @@ func deleteUserByID(id string) (status string) {
 	}
 	status = "SUCCESS"
 
+	return
+}
+
+func getUserByID(id string) (userDetail userDetail) {
+	db := dbConnect()
+	defer db.Close()
+
+	results, err := db.Query("SELECT id, user_name, first_name, last_name, password, email_id FROM USER_DETAIL where id = ? ", id)
+	if err != nil {
+		panic(err.Error())
+	}
+
+	if results.Next() {
+		err = results.Scan(&userDetail.ID, &userDetail.UserName, &userDetail.FirstName, &userDetail.LastName, &userDetail.Password, &userDetail.EmailID)
+		if err != nil {
+			panic(err.Error())
+		}
+	}
+
+	results.Close()
+	fmt.Println("Successfully selected record from USER_DETAIL table for user id: " + id)
+	return
+}
+
+func updateUserByID(u userDetail) (status string) {
+	db := dbConnect()
+	defer db.Close()
+
+	results, err := db.Query("Update USER_DETAIL set user_name=?, first_name=?, last_name=?, password=?, email_id=?, last_update_date=? where id = ? ", u.UserName, u.FirstName, u.LastName, u.Password, u.EmailID, time.Now(), u.ID)
+	if err != nil {
+		status = "Error while updating user with id: " + strconv.Itoa(u.ID)
+		panic(err.Error())
+	}
+
+	status = "SUCCESS"
+
+	results.Close()
+	fmt.Println("Successfully updated record from USER_DETAIL table for user id: ", u.ID)
 	return
 }
