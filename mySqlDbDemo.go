@@ -34,6 +34,30 @@ func insertInUserTableWithDataApp(userName string, firstName string, lastName st
 	return
 }
 
+func insertInUserTableWithDataAppAndReturnID(userName string, firstName string, lastName string, password string, emailId string) (status string, id int64, err error) {
+	db := dbConnect()
+	defer db.Close()
+
+	id = 0
+	stmt, err := db.Prepare("INSERT USER_DETAIL SET user_name=?, first_name=?, last_name=?, password=?, last_update_date=?, email_id=?")
+	if err != nil {
+		status = "Error while insert user: " + userName
+		return status, -1, err
+	}
+	defer stmt.Close()
+
+	res, err := stmt.Exec(userName, lastName, firstName, password, time.Now(), emailId)
+	if err != nil {
+		status = "Error while insert user: " + userName
+		return status, -1, err
+	}
+
+	id, err = res.LastInsertId()
+	status = "SUCCESS"
+
+	return status, id, err
+}
+
 func validateUserNameAndPassword(userName string, password string) (status string) {
 	db := dbConnect()
 	defer db.Close()
@@ -82,9 +106,36 @@ func getAllUserData() (userDetails []userDetail) {
 			panic(err.Error())
 		}
 		userDetails = append(userDetails, userDetail)
-		fmt.Println("In db method: ", userDetail.UserName)
+		//fmt.Println("In db method: ", userDetail.UserName)
 	}
 
+	results.Close()
+	fmt.Println("Successfully select records from USER_DETAIL table")
+	return
+}
+
+func getAllUserDataByUsername(searchUserName string) (userDetails []userDetail) {
+	db := dbConnect()
+	defer db.Close()
+
+	userDetails = make([]userDetail, 0)
+
+	results, err := db.Query("SELECT id, user_name, first_name, last_name, password, email_id, last_update_date FROM USER_DETAIL where user_name like ? ", searchUserName)
+	if err != nil {
+		panic(err.Error())
+	}
+
+	for results.Next() {
+		var userDetail userDetail
+
+		err = results.Scan(&userDetail.ID, &userDetail.UserName, &userDetail.FirstName, &userDetail.LastName, &userDetail.Password, &userDetail.EmailID, &userDetail.LastUpdate)
+		if err != nil {
+			panic(err.Error())
+		}
+		userDetails = append(userDetails, userDetail)
+		fmt.Println("In db method: ", userDetail.UserName)
+	}
+	fmt.Println("size is: ", len(userDetails))
 	results.Close()
 	fmt.Println("Successfully select records from USER_DETAIL table")
 	return
@@ -104,24 +155,49 @@ func deleteUserByID(id string) (status string) {
 	return
 }
 
-func getUserByID(id string) (userDetail userDetail) {
+func getUserByID(id string) (userDetail userDetail, status string) {
 	db := dbConnect()
 	defer db.Close()
 
-	results, err := db.Query("SELECT id, user_name, first_name, last_name, password, email_id FROM USER_DETAIL where id = ? ", id)
+	results, err := db.Query("SELECT id, user_name, first_name, last_name, password, email_id, last_update_date FROM USER_DETAIL where id = ? ", id)
+	if err != nil {
+		status = "Error while selecting user with id: " + id
+		fmt.Println(status)
+		panic(err.Error())
+	}
+
+	if results.Next() {
+		err = results.Scan(&userDetail.ID, &userDetail.UserName, &userDetail.FirstName, &userDetail.LastName, &userDetail.Password, &userDetail.EmailID, &userDetail.LastUpdate)
+		if err != nil {
+			status = "Error while selecting user with id: " + id
+			panic(err.Error())
+		}
+		status = "SUCCESS"
+		fmt.Println("Successfully selected record from USER_DETAIL table for user id: " + id)
+	}
+
+	results.Close()
+	return
+}
+
+func getUserByUserName(userName string) (userDetail userDetail) {
+	db := dbConnect()
+	defer db.Close()
+
+	results, err := db.Query("SELECT id, user_name, first_name, last_name, password, email_id, last_update_date FROM USER_DETAIL where user_name = ? ", userName)
 	if err != nil {
 		panic(err.Error())
 	}
 
 	if results.Next() {
-		err = results.Scan(&userDetail.ID, &userDetail.UserName, &userDetail.FirstName, &userDetail.LastName, &userDetail.Password, &userDetail.EmailID)
+		err = results.Scan(&userDetail.ID, &userDetail.UserName, &userDetail.FirstName, &userDetail.LastName, &userDetail.Password, &userDetail.EmailID, &userDetail.LastUpdate)
 		if err != nil {
 			panic(err.Error())
 		}
 	}
 
 	results.Close()
-	fmt.Println("Successfully selected record from USER_DETAIL table for user id: " + id)
+	fmt.Println("Successfully selected record from USER_DETAIL table for user id: " + userName)
 	return
 }
 
@@ -129,7 +205,7 @@ func updateUserByID(u userDetail) (status string) {
 	db := dbConnect()
 	defer db.Close()
 
-	results, err := db.Query("Update USER_DETAIL set user_name=?, first_name=?, last_name=?, password=?, email_id=?, last_update_date=? where id = ? ", u.UserName, u.FirstName, u.LastName, u.Password, u.EmailID, time.Now(), u.ID)
+	results, err := db.Query("Update USER_DETAIL set first_name=?, last_name=?, password=?, email_id=?, last_update_date=? where id = ? ", u.FirstName, u.LastName, u.Password, u.EmailID, time.Now(), u.ID)
 	if err != nil {
 		status = "Error while updating user with id: " + strconv.Itoa(u.ID)
 		panic(err.Error())

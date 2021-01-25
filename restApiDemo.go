@@ -5,6 +5,7 @@ import (
 )
 
 func loadAPIConfiguration() {
+	// Rest and HTML
 
 	router.HandleFunc("/", indexPageHandler)
 	router.HandleFunc("/internal", internalPageHandler)
@@ -21,6 +22,8 @@ func loadAPIConfiguration() {
 
 	router.HandleFunc("/update/{id}", updateUserFormHandler)
 	router.HandleFunc("/updateUser/{id}", updateUserHandler)
+
+	router.HandleFunc("/searchByUserName", searchUserHandler)
 
 	http.Handle("/", router)
 	http.ListenAndServe(":8000", nil)

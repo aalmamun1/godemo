@@ -5,10 +5,6 @@ import (
 	"net/http"
 )
 
-const messageWithHomeLink = `
-<a href="/" >Home</a><br><br>
-	`
-
 // sgnup handler
 func signupHandler(response http.ResponseWriter, request *http.Request) {
 	name := request.FormValue("signupName")

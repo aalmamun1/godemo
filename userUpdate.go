@@ -11,7 +11,7 @@ func updateUserFormHandler(response http.ResponseWriter, request *http.Request) 
 	vars := mux.Vars(request)
 	id := vars["id"]
 
-	userDetail := getUserByID(id)
+	userDetail, _ := getUserByID(id)
 
 	fmt.Println("To update user: ", userDetail)
 	fmt.Fprintf(response, updatePage, userDetail.ID, userDetail.UserName, userDetail.Password, userDetail.FirstName, userDetail.LastName, userDetail.EmailID)
