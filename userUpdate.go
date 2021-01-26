@@ -13,7 +13,6 @@ func updateUserFormHandler(response http.ResponseWriter, request *http.Request) 
 
 	userDetail, _ := getUserByID(id)
 
-	fmt.Println("To update user: ", userDetail)
 	fmt.Fprintf(response, updatePage, userDetail.ID, userDetail.UserName, userDetail.Password, userDetail.FirstName, userDetail.LastName, userDetail.EmailID)
 }
 
@@ -34,7 +33,6 @@ func updateUserHandler(response http.ResponseWriter, request *http.Request) {
 		status := updateUserByID(userDetail)
 
 		if status == "SUCCESS" {
-			fmt.Println("Deleted user with id: ", id, " successfully")
 			http.Redirect(response, request, "/internalUser", 302)
 		} else {
 			fmt.Fprintf(response, status)

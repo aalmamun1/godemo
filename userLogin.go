@@ -7,7 +7,6 @@ import (
 )
 
 // cookie handling
-
 var cookieHandler = securecookie.New(
 	securecookie.GenerateRandomKey(64),
 	securecookie.GenerateRandomKey(32))
@@ -16,7 +15,7 @@ func getUserName(request *http.Request) (userName string) {
 	if cookie, err := request.Cookie("session"); err == nil {
 		cookieValue := make(map[string]string)
 		if err = cookieHandler.Decode("session", cookie.Value, &cookieValue); err == nil {
-			fmt.Println("cookie.Value: ", cookie.Value, ", name: ", cookie.Name, cookie.Path)
+			//fmt.Println("cookie.Value: ", cookie.Value, ", name: ", cookie.Name, cookie.Path)
 			userName = cookieValue["name"]
 		}
 	}
@@ -47,14 +46,11 @@ func clearSession(response http.ResponseWriter) {
 	http.SetCookie(response, cookie)
 }
 
-// login handler
-
 func loginHandler(response http.ResponseWriter, request *http.Request) {
 	name := request.FormValue("name")
 	pass := request.FormValue("password")
 	redirectTarget := "/"
 	if name != "" && pass != "" {
-		// .. check credentials ..
 		setSession(name, response)
 		status := validateUserNameAndPassword(name, pass)
 

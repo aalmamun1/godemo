@@ -2,15 +2,12 @@ package main
 
 import (
 	"database/sql"
-	"fmt"
 	_ "github.com/go-sql-driver/mysql"
 	"strconv"
 	"time"
 )
 
 func dbConnect() (db *sql.DB) {
-	fmt.Println("my sql database connect test")
-
 	db, err := sql.Open("mysql", "connect:connect@tcp(127.0.0.1:3306)/GoDemo")
 	if err != nil {
 		panic(err.Error())
@@ -30,7 +27,6 @@ func insertInUserTableWithDataApp(userName string, firstName string, lastName st
 	defer insert.Close()
 
 	status = "User: " + userName + " inserted successfully"
-	fmt.Println("Successfully inserted into USER table")
 	return
 }
 
@@ -72,8 +68,6 @@ func validateUserNameAndPassword(userName string, password string) (status strin
 	} else {
 		status = "username and/or password is invalid"
 	}
-
-	fmt.Println(status)
 	return
 }
 
@@ -92,7 +86,6 @@ func getAllUserData() (userDetails []userDetail) {
 	defer db.Close()
 
 	userDetails = make([]userDetail, 0)
-
 	results, err := db.Query("SELECT id, user_name, first_name, last_name, password, email_id, last_update_date FROM USER_DETAIL ")
 	if err != nil {
 		panic(err.Error())
@@ -106,11 +99,9 @@ func getAllUserData() (userDetails []userDetail) {
 			panic(err.Error())
 		}
 		userDetails = append(userDetails, userDetail)
-		//fmt.Println("In db method: ", userDetail.UserName)
 	}
 
 	results.Close()
-	fmt.Println("Successfully select records from USER_DETAIL table")
 	return
 }
 
@@ -133,11 +124,8 @@ func getAllUserDataByUsername(searchUserName string) (userDetails []userDetail) 
 			panic(err.Error())
 		}
 		userDetails = append(userDetails, userDetail)
-		fmt.Println("In db method: ", userDetail.UserName)
 	}
-	fmt.Println("size is: ", len(userDetails))
 	results.Close()
-	fmt.Println("Successfully select records from USER_DETAIL table")
 	return
 }
 
@@ -162,7 +150,6 @@ func getUserByID(id string) (userDetail userDetail, status string) {
 	results, err := db.Query("SELECT id, user_name, first_name, last_name, password, email_id, last_update_date FROM USER_DETAIL where id = ? ", id)
 	if err != nil {
 		status = "Error while selecting user with id: " + id
-		fmt.Println(status)
 		panic(err.Error())
 	}
 
@@ -173,7 +160,6 @@ func getUserByID(id string) (userDetail userDetail, status string) {
 			panic(err.Error())
 		}
 		status = "SUCCESS"
-		fmt.Println("Successfully selected record from USER_DETAIL table for user id: " + id)
 	}
 
 	results.Close()
@@ -197,7 +183,6 @@ func getUserByUserName(userName string) (userDetail userDetail) {
 	}
 
 	results.Close()
-	fmt.Println("Successfully selected record from USER_DETAIL table for user id: " + userName)
 	return
 }
 
@@ -214,6 +199,5 @@ func updateUserByID(u userDetail) (status string) {
 	status = "SUCCESS"
 
 	results.Close()
-	fmt.Println("Successfully updated record from USER_DETAIL table for user id: ", u.ID)
 	return
 }

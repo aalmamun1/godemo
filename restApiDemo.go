@@ -1,12 +1,14 @@
 package main
 
 import (
+	"github.com/gorilla/mux"
 	"net/http"
 )
 
+var router = mux.NewRouter()
+
 func loadAPIConfiguration() {
 	// Rest and HTML
-
 	router.HandleFunc("/", indexPageHandler)
 	router.HandleFunc("/internal", internalPageHandler)
 	router.HandleFunc("/internalUser", internalUserPageHandler)
@@ -25,6 +27,14 @@ func loadAPIConfiguration() {
 
 	router.HandleFunc("/searchByUserName", searchUserHandler)
 
+	// Rest API only and test case
+	router.HandleFunc("/users", getAllUsers).Methods("GET")
+	router.HandleFunc("/users/{id}", getUser).Methods("GET")
+	router.HandleFunc("/users", createUser).Methods("POST")
+	router.HandleFunc("/users/{id}", updateUser).Methods("PUT")
+	router.HandleFunc("/users/{id}", deleteUser).Methods("DELETE")
+
+	// Main api configuration
 	http.Handle("/", router)
 	http.ListenAndServe(":8000", nil)
 

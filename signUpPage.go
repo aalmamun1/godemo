@@ -5,7 +5,6 @@ import (
 	"net/http"
 )
 
-// sgnup handler
 func signupHandler(response http.ResponseWriter, request *http.Request) {
 	name := request.FormValue("signupName")
 	firstName := request.FormValue("firstName")
@@ -14,7 +13,6 @@ func signupHandler(response http.ResponseWriter, request *http.Request) {
 	emailId := request.FormValue("email")
 	redirectTarget := "/"
 	if name != "" && pass != "" {
-		// .. check credentials ..
 		setSession(name, response)
 
 		insertInUserTableWithDataApp(name, firstName, lastName, pass, emailId)
