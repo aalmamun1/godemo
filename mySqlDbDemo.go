@@ -7,6 +7,12 @@ import (
 	"time"
 )
 
+/*
+Simple install the package to your $GOPATH with the go tool from shell:
+
+$ go get -u github.com/go-sql-driver/mysql
+*/
+
 func dbConnect() (db *sql.DB) {
 	db, err := sql.Open("mysql", "connect:connect@tcp(127.0.0.1:3306)/GoDemo")
 	if err != nil {

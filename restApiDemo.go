@@ -5,6 +5,12 @@ import (
 	"net/http"
 )
 
+/*
+Simple install the package to your $GOPATH with the go tool from shell:
+
+$ go get -u github.com/gorilla/mux
+*/
+
 var router = mux.NewRouter()
 
 func loadAPIConfiguration() {
